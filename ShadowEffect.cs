@@ -1,5 +1,7 @@
 
+using PaintDotNet.PropertySystem;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Resources;
 
@@ -8,7 +10,7 @@ namespace PaintDotNet.Effects
 	/// <summary>
 	/// Configurable effect for Paint.NET which creates a shadow of the source image
 	/// </summary>
-	public class ShadowEffect : Effect
+    public class ShadowEffect : PropertyBasedEffect
     {
         /// <summary>
         /// The user displayed name of the effect
@@ -46,77 +48,72 @@ namespace PaintDotNet.Effects
 		/// </summary>
 		public ShadowEffect() : base(StaticName,
 									StaticImage,
-									true)
+                                    "Shadow Effect",
+                                    EffectFlags.Configurable)
 		{
-            this.blurEffect = new BlurEffect();
+            this.blurEffect = new GaussianBlurEffect();
 		}
 
 		#endregion Constructors
 
 		#region Members
 
-		/// <summary>
-		/// Creates an new Instance of the effect's configuration dialog
-		/// </summary>
-		/// <returns>
-		/// Reference to a <see cref="ThreeAmountsConfigDialog"/> object
-		/// </returns>
-		public override EffectConfigDialog CreateConfigDialog()
-		{
-            ThreeAmountsConfigDialog tacd = new ThreeAmountsConfigDialog();
+        protected override PropertyCollection OnCreatePropertyCollection()
+        {
+            List<Property> propsBuilder = new List<Property>()
+            {
+                new Int32Property(resources.GetString("ShadowEffect.AlphaAmountLabel"), 115, 0, 255),
+                new Int32Property(resources.GetString("ShadowEffect.ShadowAngle"), 45, 0, 180),
+                new Int32Property(resources.GetString("ShadowEffect.ShadowDepthAngle"), 45, 0, 90)
+            };
 
-            tacd.Text = StaticName;
-            tacd.Icon = Utility.ImageToIcon(StaticImage);
+            return new PropertyCollection(propsBuilder);
+        } 
 
-            // TODO:
-            // o Allow blur settings to be configured (shadow intensity)
-            // o Allow base shadow color to be configured
-            // o Visual configuration of shadow placement (similar to zoom/rotate effect)
-            // o When custom token is created, place the "only once" calculations there
-            // o Implement as an combination of independent transformations rather than a
-            //   completely custom effect
+        private GaussianBlurEffect blurEffect;
 
-            // Alpha level for shadow
-            tacd.Amount1Maximum = 255;
-            tacd.Amount1Minimum = 0;
-            tacd.Amount1Default = 115;  // Google maps default
-            tacd.Amount1Label = resources.GetString("ShadowEffect.AlphaAmountLabel");
+        // ----------------------------------------------------------------------
+        /// <summary>
+        /// Called after the token of the effect changed.
+        /// This method is used to read all values of the token to instance variables.
+        /// These instance variables are then used to render the surface.
+        /// </summary>
+        protected override void OnSetRenderInfo(PropertyBasedEffectConfigToken effectToken, RenderArgs dstArgs, RenderArgs srcArgs)
+        {
+            // Read the current settings of the properties
+            //propInt32Slider = effectToken.GetProperty<Int32Property>(PropertyNames.Int32Slider).Value;
 
-            // Left to right shadow angle
-            tacd.Amount2Maximum = 180;
-            tacd.Amount2Minimum = 0;
-            tacd.Amount2Default = 45;   // Google maps default
-            tacd.Amount2Label = resources.GetString("ShadowEffect.ShadowAngle");
+            base.OnSetRenderInfo(effectToken, dstArgs, srcArgs);
+        } /* OnSetRenderInfo */
 
-            // Left to right angle
-            tacd.Amount3Maximum = 90;
-            tacd.Amount3Minimum = 0;
-            tacd.Amount3Default = 45;   // Google maps default
-            tacd.Amount3Label = resources.GetString("ShadowEffect.ShadowDepthAngle");
-            
-            return tacd;
-		}
-
-        private BlurEffect blurEffect;
+        // ----------------------------------------------------------------------
+        /// <summary>
+        /// Render an area defined by a list of rectangles
+        /// This function may be called multiple times to render the area of
+        //  the selection on the active layer
+        /// </summary>
+        protected override void OnRender(Rectangle[] rois, int startIndex, int length)
+        {
+            for (int i = startIndex; i < startIndex + length; ++i)
+            {
+                RenderRectangle(DstArgs, SrcArgs, rois[i]);
+            }
+        }
 
         /// <summary>
         /// Creates the shadow of the source image
         /// </summary>
-        /// <param name="properties">The parameters to the effect. If IsConfigurable is true, then this must not be null.</param>
         /// <param name="dstArgs">Describes the destination surface.</param>
         /// <param name="srcArgs">Describes the source surface.</param>
-        /// <param name="rois">The list of rectangles that describes the region of interest.</param>
-        /// <param name="startIndex">The index within roi to start enumerating from.</param>
-        /// <param name="length">The number of rectangles to enumerate from roi.</param>
-        public unsafe override void Render(EffectConfigToken properties, PaintDotNet.RenderArgs dstArgs, PaintDotNet.RenderArgs srcArgs, Rectangle[] rois, int startIndex, int length)
+        /// <param name="rect">The rectangle that describes the region of interest.</param>
+        /// 
+        protected unsafe void RenderRectangle(PaintDotNet.RenderArgs dstArgs, PaintDotNet.RenderArgs srcArgs, Rectangle rect)
         {
-            if (length == 0) return;
-
             // amount1 = alpha of shadow
             // amount2 = left to right angle in degrees
             // amount3 = front to back angle in degrees
-            ThreeAmountsConfigToken token = (ThreeAmountsConfigToken)properties;
-            double shadowFactor = (double)(token.Amount1) / 255.0;
+            //ThreeAmountsConfigToken token = (ThreeAmountsConfigToken)properties;
+            double shadowFactor = (double)(Token.GetProperty<Int32Property>("ShadowEffect.Alpha").Value) / 255.0;
 
             // The blurring algorithm was stolen directly from the BlurEffect code.  I couldn't 
             // use it directly because the source image must be transformed prior to applying 
@@ -125,53 +122,102 @@ namespace PaintDotNet.Effects
             Surface dst = dstArgs.Surface;
             Surface src = srcArgs.Surface;
 
-            // For each rectangle to update on the surface
-            for (int ri = startIndex; ri < startIndex + length; ++ri)
+            if (rect.Height >= 1 && rect.Width >= 1)
             {
-                Rectangle rect = rois[ri];
-
-                if (rect.Height >= 1 && rect.Width >= 1)
+                // For each row in the rectangle
+                for (int y = rect.Top; y < rect.Bottom; ++y)
                 {
-                    // For each row in the rectangle
-                    for (int y = rect.Top; y < rect.Bottom; ++y)
+                    double radius = invertedYcoordinate(y, srcArgs.Surface.Height) / (double)rowsPerBlurRadius;
+                    int[] w = CreateGaussianBlurRow(radius);
+                    int wlen = w.Length;
+                    int r = (wlen - 1) / 2;
+                    long[] waSums = new long[wlen];
+                    long[] aSums = new long[wlen];
+                    long waSum = 0;
+                    long aSum = 0;
+                    ColorBgra* dstPtr = dst.GetPointAddressUnchecked(rect.Left, y);
+
+                    // For each item in the gaussian blur row
+                    for (int wx = 0; wx < wlen; ++wx)
                     {
-                        double radius = invertedYcoordinate(y, srcArgs.Surface.Height) / (double)rowsPerBlurRadius;
-                        int[] w = CreateGaussianBlurRow(radius);
-                        int wlen = w.Length;
-                        int r = (wlen - 1) / 2;
-                        long[] waSums = new long[wlen];
-                        long[] aSums = new long[wlen];
-                        long waSum = 0;
-                        long aSum = 0;
-                        ColorBgra* dstPtr = dst.GetPointAddressUnchecked(rect.Left, y);
+                        int srcX = rect.Left + wx - r;
+                        waSums[wx] = 0;
+                        aSums[wx] = 0;
 
-                        // For each item in the gaussian blur row
-                        for (int wx = 0; wx < wlen; ++wx)
+                        if (srcX >= 0 && srcX < src.Width)
                         {
-                            int srcX = rect.Left + wx - r;
-                            waSums[wx] = 0;
-                            aSums[wx] = 0;
-
-                            if (srcX >= 0 && srcX < src.Width)
+                            for (int wy = 0; wy < wlen; ++wy)
                             {
-                                for (int wy = 0; wy < wlen; ++wy)
+                                int srcY = y + wy - r;
+
+                                if (srcY >= 0 && srcY < src.Height)
                                 {
-                                    int srcY = y + wy - r;
+                                    ColorBgra c = getShadowPixel(srcX, srcY, src, shadowFactor, Token.GetProperty<Int32Property>("ShadowEffect.ShadowAngle").Value, Token.GetProperty<Int32Property>("ShadowEffect.ShadowDepthAngle").Value);
+                                    int wp = w[wy];
 
-                                    if (srcY >= 0 && srcY < src.Height)
-                                    {
-                                        ColorBgra c = getShadowPixel(srcX, srcY, src, shadowFactor, token.Amount2, token.Amount3);
-                                        int wp = w[wy];
-
-                                        waSums[wx] += wp;
-                                        aSums[wx] += wp * c.A;
-                                    }
+                                    waSums[wx] += wp;
+                                    aSums[wx] += wp * c.A;
                                 }
-
-                                int wwx = w[wx];
-                                waSum += wwx * waSums[wx];
-                                aSum += wwx * aSums[wx];
                             }
+
+                            int wwx = w[wx];
+                            waSum += wwx * waSums[wx];
+                            aSum += wwx * aSums[wx];
+                        }
+                    }
+
+                    if (waSum == 0)
+                        dstPtr->Bgra = 0;
+                    else
+                        dstPtr->Bgra = ColorBgra.BgraToUInt32(0, 0, 0, (int)(aSum / waSum));
+
+                    ++dstPtr;
+
+                    for (int x = rect.Left + 1; x < rect.Right; ++x)
+                    {
+                        for (int i = 0; i < wlen - 1; ++i)
+                        {
+                            waSums[i] = waSums[i + 1];
+                            aSums[i] = aSums[i + 1];
+                        }
+
+                        waSum = 0;
+                        aSum = 0;
+
+                        int wx;
+                        for (wx = 0; wx < wlen - 1; ++wx)
+                        {
+                            long wwx = (long)w[wx];
+                            waSum += wwx * waSums[wx];
+                            aSum += wwx * aSums[wx];
+                        }
+
+                        wx = wlen - 1;
+
+                        waSums[wx] = 0;
+                        aSums[wx] = 0;
+
+                        int srcX = x + wx - r;
+
+                        if (srcX >= 0 && srcX < src.Width)
+                        {
+                            for (int wy = 0; wy < wlen; ++wy)
+                            {
+                                int srcY = y + wy - r;
+
+                                if (srcY >= 0 && srcY < src.Height)
+                                {
+                                    ColorBgra c = getShadowPixel(srcX, srcY, src, shadowFactor, Token.GetProperty<Int32Property>("ShadowEffect.ShadowAngle").Value, Token.GetProperty<Int32Property>("ShadowEffect.ShadowDepthAngle").Value);
+                                    int wp = w[wy];
+
+                                    waSums[wx] += wp;
+                                    aSums[wx] += wp * (long)c.A;
+                                }
+                            }
+
+                            int wr = w[wx];
+                            waSum += (long)wr * waSums[wx];
+                            aSum += (long)wr * aSums[wx];
                         }
 
                         if (waSum == 0)
@@ -180,61 +226,6 @@ namespace PaintDotNet.Effects
                             dstPtr->Bgra = ColorBgra.BgraToUInt32(0, 0, 0, (int)(aSum / waSum));
 
                         ++dstPtr;
-
-                        for (int x = rect.Left + 1; x < rect.Right; ++x)
-                        {
-                            for (int i = 0; i < wlen - 1; ++i)
-                            {
-                                waSums[i] = waSums[i + 1];
-                                aSums[i] = aSums[i + 1];
-                            }
-
-                            waSum = 0;
-                            aSum = 0;
-
-                            int wx;
-                            for (wx = 0; wx < wlen - 1; ++wx)
-                            {
-                                long wwx = (long)w[wx];
-                                waSum += wwx * waSums[wx];
-                                aSum += wwx * aSums[wx];
-                            }
-
-                            wx = wlen - 1;
-
-                            waSums[wx] = 0;
-                            aSums[wx] = 0;
-
-                            int srcX = x + wx - r;
-
-                            if (srcX >= 0 && srcX < src.Width)
-                            {
-                                for (int wy = 0; wy < wlen; ++wy)
-                                {
-                                    int srcY = y + wy - r;
-
-                                    if (srcY >= 0 && srcY < src.Height)
-                                    {
-                                        ColorBgra c = getShadowPixel(srcX, srcY, src, shadowFactor, token.Amount2, token.Amount3);
-                                        int wp = w[wy];
-
-                                        waSums[wx] += wp;
-                                        aSums[wx] += wp * (long)c.A;
-                                    }
-                                }
-
-                                int wr = w[wx];
-                                waSum += (long)wr * waSums[wx];
-                                aSum += (long)wr * aSums[wx];
-                            }
-
-                            if (waSum == 0)
-                                dstPtr->Bgra = 0;
-                            else
-                                dstPtr->Bgra = ColorBgra.BgraToUInt32(0, 0, 0, (int)(aSum / waSum));
-
-                            ++dstPtr;
-                        }
                     }
                 }
             }

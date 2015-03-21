@@ -88,6 +88,12 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="PaintDotNet.Base">
+      <HintPath>..\..\..\Program Files\Paint.NET\PaintDotNet.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="PaintDotNet.Core">
+      <HintPath>..\..\..\Program Files\Paint.NET\PaintDotNet.Core.dll</HintPath>
+    </Reference>
     <Reference Include="PaintDotNet.Data, Version=2.72.2432.31553, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Program Files\Paint.NET\PaintDotNet.Data.dll</HintPath>
@@ -100,17 +106,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Program Files\Paint.NET\PaintDotNet.Resources.dll</HintPath>
     </Reference>
-    <Reference Include="PaintDotNet.StylusReader, Version=2.72.2432.31553, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Program Files\Paint.NET\PaintDotNet.StylusReader.dll</HintPath>
-    </Reference>
     <Reference Include="PaintDotNet.SystemLayer, Version=2.72.2432.31553, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Program Files\Paint.NET\PaintDotNet.SystemLayer.dll</HintPath>
-    </Reference>
-    <Reference Include="PdnLib, Version=2.72.2432.31553, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Program Files\Paint.NET\PdnLib.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
