@@ -1,4 +1,5 @@
 
+using PaintDotNet.IndirectUI;
 using PaintDotNet.PropertySystem;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace PaintDotNet.Effects
 	/// <summary>
 	/// Configurable effect for Paint.NET which creates a shadow of the source image
 	/// </summary>
-    public class ShadowEffect : PropertyBasedEffect
+    public sealed class ShadowEffect : PropertyBasedEffect
     {
         /// <summary>
         /// The user displayed name of the effect
@@ -58,17 +59,36 @@ namespace PaintDotNet.Effects
 
 		#region Members
 
+        /// <summary>
+        /// </summary>
         protected override PropertyCollection OnCreatePropertyCollection()
         {
             List<Property> propsBuilder = new List<Property>()
             {
-                new Int32Property(resources.GetString("ShadowEffect.AlphaAmountLabel"), 115, 0, 255),
-                new Int32Property(resources.GetString("ShadowEffect.ShadowAngle"), 45, 0, 180),
-                new Int32Property(resources.GetString("ShadowEffect.ShadowDepthAngle"), 45, 0, 90)
+                new Int32Property("ShadowEffect.Alpha", 115, 0, 255),
+                new Int32Property("ShadowEffect.ShadowAngle", 45, 0, 180),
+                new Int32Property("ShadowEffect.ShadowDepthAngle", 45, 0, 90)
             };
 
             return new PropertyCollection(propsBuilder);
-        } 
+        }
+
+        /// <summary>
+        /// Configure the user interface of the effect.
+        /// You may change the default control type of your properties or
+        /// modify/suppress the default texts in the controls.
+        /// </summary>
+        protected override ControlInfo OnCreateConfigUI(PropertyCollection props)
+        {
+            ControlInfo configUI = CreateDefaultConfigUI(props);
+
+            // Change DisplayName (default is the PropertyNames identifier)
+            configUI.SetPropertyControlValue("ShadowEffect.Alpha", ControlInfoPropertyNames.DisplayName, resources.GetString("ShadowEffect.AlphaAmountLabel"));
+            configUI.SetPropertyControlValue("ShadowEffect.ShadowAngle", ControlInfoPropertyNames.DisplayName, resources.GetString("ShadowEffect.ShadowAngle"));
+            configUI.SetPropertyControlValue("ShadowEffect.ShadowDepthAngle", ControlInfoPropertyNames.DisplayName, resources.GetString("ShadowEffect.ShadowDepthAngle"));
+
+            return configUI;
+        }
 
         private GaussianBlurEffect blurEffect;
 
@@ -90,7 +110,7 @@ namespace PaintDotNet.Effects
         /// <summary>
         /// Render an area defined by a list of rectangles
         /// This function may be called multiple times to render the area of
-        //  the selection on the active layer
+        ///  the selection on the active layer
         /// </summary>
         protected override void OnRender(Rectangle[] rois, int startIndex, int length)
         {
@@ -107,7 +127,7 @@ namespace PaintDotNet.Effects
         /// <param name="srcArgs">Describes the source surface.</param>
         /// <param name="rect">The rectangle that describes the region of interest.</param>
         /// 
-        protected unsafe void RenderRectangle(PaintDotNet.RenderArgs dstArgs, PaintDotNet.RenderArgs srcArgs, Rectangle rect)
+        private unsafe void RenderRectangle(PaintDotNet.RenderArgs dstArgs, PaintDotNet.RenderArgs srcArgs, Rectangle rect)
         {
             // amount1 = alpha of shadow
             // amount2 = left to right angle in degrees
