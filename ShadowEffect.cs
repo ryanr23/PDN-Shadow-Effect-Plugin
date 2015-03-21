@@ -8,9 +8,9 @@ using System.Resources;
 
 namespace PaintDotNet.Effects
 {
-	/// <summary>
-	/// Configurable effect for Paint.NET which creates a shadow of the source image
-	/// </summary>
+    /// <summary>
+    /// Configurable effect for Paint.NET which creates a shadow of the source image
+    /// </summary>
     public sealed class ShadowEffect : PropertyBasedEffect
     {
         /// <summary>
@@ -35,29 +35,30 @@ namespace PaintDotNet.Effects
             }
         }
 
-		#region Static Private Fields
+        #region Static Private Fields
 
-		private static ResourceManager resources = new ResourceManager(typeof(ShadowEffect));
+        private static ResourceManager resources = new ResourceManager(typeof(ShadowEffect));
         private static int rowsPerBlurRadius = 5;
 
-		#endregion Static Private Fields
+        #endregion Static Private Fields
 
-		#region Constructors
+        #region Constructors
 
-		/// <summary>
-		/// Creates an instance of the <see cref="ShadowEffect"/> class
-		/// </summary>
-		public ShadowEffect() : base(StaticName,
-									StaticImage,
-                                    "Shadow Effect",
-                                    EffectFlags.Configurable)
-		{
+        /// <summary>
+        /// Creates an instance of the <see cref="ShadowEffect"/> class
+        /// </summary>
+        public ShadowEffect()
+            : base(StaticName,
+                  StaticImage,
+                  "Shadow Effect",
+                  EffectFlags.Configurable)
+        {
             this.blurEffect = new GaussianBlurEffect();
-		}
+        }
 
-		#endregion Constructors
+        #endregion Constructors
 
-		#region Members
+        #region Members
 
         /// <summary>
         /// </summary>
@@ -280,7 +281,7 @@ namespace PaintDotNet.Effects
             int size = (int)(1 + (Math.Ceiling(amount) * 2));
             int[] weights = new int[size];
 
-            for (int i = (int)Math.Ceiling(amount); i >= 0; --i, --amount )
+            for (int i = (int)Math.Ceiling(amount); i >= 0; --i, --amount)
             {
                 weights[i] = (int)(16 * (amount + 1.0));
                 weights[weights.Length - i - 1] = weights[i];
@@ -289,6 +290,6 @@ namespace PaintDotNet.Effects
             return weights;
         }
 
-		#endregion Private Methods
-	}
+        #endregion Private Methods
+    }
 }
