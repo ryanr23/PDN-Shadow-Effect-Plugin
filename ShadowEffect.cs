@@ -94,20 +94,6 @@ namespace PaintDotNet.Effects
 
         // ----------------------------------------------------------------------
         /// <summary>
-        /// Called after the token of the effect changed.
-        /// This method is used to read all values of the token to instance variables.
-        /// These instance variables are then used to render the surface.
-        /// </summary>
-        protected override void OnSetRenderInfo(PropertyBasedEffectConfigToken effectToken, RenderArgs dstArgs, RenderArgs srcArgs)
-        {
-            // Read the current settings of the properties
-            //propInt32Slider = effectToken.GetProperty<Int32Property>(PropertyNames.Int32Slider).Value;
-
-            base.OnSetRenderInfo(effectToken, dstArgs, srcArgs);
-        } /* OnSetRenderInfo */
-
-        // ----------------------------------------------------------------------
-        /// <summary>
         /// Render an area defined by a list of rectangles
         /// This function may be called multiple times to render the area of
         ///  the selection on the active layer
@@ -116,38 +102,31 @@ namespace PaintDotNet.Effects
         {
             for (int i = startIndex; i < startIndex + length; ++i)
             {
-                RenderRectangle(DstArgs, SrcArgs, rois[i]);
+                RenderRectangle(DstArgs.Surface, SrcArgs.Surface, rois[i]);
             }
         }
 
         /// <summary>
         /// Creates the shadow of the source image
         /// </summary>
-        /// <param name="dstArgs">Describes the destination surface.</param>
-        /// <param name="srcArgs">Describes the source surface.</param>
+        /// <param name="dst">Describes the destination surface.</param>
+        /// <param name="src">Describes the source surface.</param>
         /// <param name="rect">The rectangle that describes the region of interest.</param>
         /// 
-        private unsafe void RenderRectangle(PaintDotNet.RenderArgs dstArgs, PaintDotNet.RenderArgs srcArgs, Rectangle rect)
+        private unsafe void RenderRectangle(Surface dst, Surface src, Rectangle rect)
         {
-            // amount1 = alpha of shadow
-            // amount2 = left to right angle in degrees
-            // amount3 = front to back angle in degrees
-            //ThreeAmountsConfigToken token = (ThreeAmountsConfigToken)properties;
             double shadowFactor = (double)(Token.GetProperty<Int32Property>("ShadowEffect.Alpha").Value) / 255.0;
 
             // The blurring algorithm was stolen directly from the BlurEffect code.  I couldn't 
             // use it directly because the source image must be transformed prior to applying 
             // the blur effect. Also, I gradually increase the blur radius from one end
             // of the shadow to the other, which the blur effect code doesn't support either.
-            Surface dst = dstArgs.Surface;
-            Surface src = srcArgs.Surface;
-
             if (rect.Height >= 1 && rect.Width >= 1)
             {
                 // For each row in the rectangle
                 for (int y = rect.Top; y < rect.Bottom; ++y)
                 {
-                    double radius = invertedYcoordinate(y, srcArgs.Surface.Height) / (double)rowsPerBlurRadius;
+                    double radius = invertedYcoordinate(y, src.Height) / (double)rowsPerBlurRadius;
                     int[] w = CreateGaussianBlurRow(radius);
                     int wlen = w.Length;
                     int r = (wlen - 1) / 2;
@@ -268,10 +247,6 @@ namespace PaintDotNet.Effects
         /// <returns></returns>
         private ColorBgra getShadowPixel(int shadowX, int shadowY, Surface inSrcSurface, double inShadowFactor, int theta1, int theta2)
         {
-            // (-destY + height) = (-srcY + height) * theta2 / 90; ( up and down angle )
-            // destX = srcX + (destY / tan( theta1 )) (left to right angle 0-90)
-            // srcX = destX - (destY / tan( theta1 ))
-            // srcY = -1 * ((-destY + height) * (90/theta2)) + height;
             Point src = new Point(0, 0);
             src.X = (int)(shadowX - (invertedYcoordinate(shadowY, inSrcSurface.Height) / Math.Tan(degreesToRadians(theta1))));
             src.Y = invertedYcoordinate((int)(invertedYcoordinate(shadowY, inSrcSurface.Height) * 90.0 / theta2), inSrcSurface.Height);
