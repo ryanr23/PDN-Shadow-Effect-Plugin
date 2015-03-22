@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 //
 [assembly: NeutralResourcesLanguageAttribute("en")]
 [assembly: AssemblyTitle("Shadow Effect")]
-[assembly: AssemblyDescription("Shadow Effect Plugin for Paint.NET v3.5.10+")]
+[assembly: AssemblyDescription("Shadow Effect Plugin for Paint.NET")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("")]
