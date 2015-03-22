@@ -1,6 +1,6 @@
-
 using PaintDotNet.IndirectUI;
 using PaintDotNet.PropertySystem;
+using PaintDotNet.Data;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -50,7 +50,7 @@ namespace PaintDotNet.Effects
         public ShadowEffect()
             : base(StaticName,
                   StaticImage,
-                  "Shadow Effect",
+                  "Object",
                   EffectFlags.Configurable)
         {
             this.blurEffect = new GaussianBlurEffect();
@@ -67,8 +67,9 @@ namespace PaintDotNet.Effects
             List<Property> propsBuilder = new List<Property>()
             {
                 new Int32Property("ShadowEffect.Alpha", 115, 0, 255),
-                new Int32Property("ShadowEffect.ShadowAngle", 45, 0, 180),
-                new Int32Property("ShadowEffect.ShadowDepthAngle", 45, 0, 90)
+                new DoubleProperty("ShadowEffect.ShadowAngle", 45, 0, 180),
+                new DoubleProperty("ShadowEffect.ShadowDepthAngle", 45, 0, 90),
+                new BooleanProperty("ShadowEffect.OriginalImage", true)
             };
 
             return new PropertyCollection(propsBuilder);
@@ -85,8 +86,13 @@ namespace PaintDotNet.Effects
 
             // Change DisplayName (default is the PropertyNames identifier)
             configUI.SetPropertyControlValue("ShadowEffect.Alpha", ControlInfoPropertyNames.DisplayName, resources.GetString("ShadowEffect.AlphaAmountLabel"));
+            configUI.SetPropertyControlValue("ShadowEffect.Alpha", ControlInfoPropertyNames.ControlColors, new ColorBgra[] { ColorBgra.White, ColorBgra.Black });
             configUI.SetPropertyControlValue("ShadowEffect.ShadowAngle", ControlInfoPropertyNames.DisplayName, resources.GetString("ShadowEffect.ShadowAngle"));
+            configUI.SetPropertyControlType("ShadowEffect.ShadowAngle", PropertyControlType.AngleChooser);
             configUI.SetPropertyControlValue("ShadowEffect.ShadowDepthAngle", ControlInfoPropertyNames.DisplayName, resources.GetString("ShadowEffect.ShadowDepthAngle"));
+            configUI.SetPropertyControlType("ShadowEffect.ShadowDepthAngle", PropertyControlType.AngleChooser);
+            configUI.SetPropertyControlValue("ShadowEffect.OriginalImage", ControlInfoPropertyNames.DisplayName, string.Empty);
+            configUI.SetPropertyControlValue("ShadowEffect.OriginalImage", ControlInfoPropertyNames.Description, "Keep original image");
 
             return configUI;
         }
@@ -106,6 +112,8 @@ namespace PaintDotNet.Effects
                 RenderRectangle(DstArgs.Surface, SrcArgs.Surface, rois[i]);
             }
         }
+
+        private BinaryPixelOp normalOp = LayerBlendModeUtil.CreateCompositionOp(LayerBlendMode.Normal);
 
         /// <summary>
         /// Creates the shadow of the source image
@@ -152,7 +160,7 @@ namespace PaintDotNet.Effects
 
                                 if (srcY >= 0 && srcY < src.Height)
                                 {
-                                    ColorBgra c = getShadowPixel(srcX, srcY, src, shadowFactor, Token.GetProperty<Int32Property>("ShadowEffect.ShadowAngle").Value, Token.GetProperty<Int32Property>("ShadowEffect.ShadowDepthAngle").Value);
+                                    ColorBgra c = getShadowPixel(srcX, srcY, src, shadowFactor, (int)Token.GetProperty<DoubleProperty>("ShadowEffect.ShadowAngle").Value, (int)Token.GetProperty<DoubleProperty>("ShadowEffect.ShadowDepthAngle").Value);
                                     int wp = w[wy];
 
                                     waSums[wx] += wp;
@@ -175,6 +183,8 @@ namespace PaintDotNet.Effects
 
                     for (int x = rect.Left + 1; x < rect.Right; ++x)
                     {
+                        ColorBgra OrginalImage = src[x, y];
+
                         for (int i = 0; i < wlen - 1; ++i)
                         {
                             waSums[i] = waSums[i + 1];
@@ -207,7 +217,7 @@ namespace PaintDotNet.Effects
 
                                 if (srcY >= 0 && srcY < src.Height)
                                 {
-                                    ColorBgra c = getShadowPixel(srcX, srcY, src, shadowFactor, Token.GetProperty<Int32Property>("ShadowEffect.ShadowAngle").Value, Token.GetProperty<Int32Property>("ShadowEffect.ShadowDepthAngle").Value);
+                                    ColorBgra c = getShadowPixel(srcX, srcY, src, shadowFactor, (int)Token.GetProperty<DoubleProperty>("ShadowEffect.ShadowAngle").Value, (int)Token.GetProperty<DoubleProperty>("ShadowEffect.ShadowDepthAngle").Value);
                                     int wp = w[wy];
 
                                     waSums[wx] += wp;
@@ -220,10 +230,24 @@ namespace PaintDotNet.Effects
                             aSum += (long)wr * aSums[wx];
                         }
 
+                        ColorBgra Shadow = new ColorBgra();
                         if (waSum == 0)
-                            dstPtr->Bgra = 0;
+                        {
+                            Shadow = ColorBgra.FromBgra(0, 0, 0, 0);
+                        }
                         else
-                            dstPtr->Bgra = ColorBgra.BgraToUInt32(0, 0, 0, (int)(aSum / waSum));
+                        {
+                            Shadow = ColorBgra.FromBgra(0, 0, 0, (byte)(aSum / waSum));
+                        }
+
+                        if (Token.GetProperty<BooleanProperty>("ShadowEffect.OriginalImage").Value)
+                        {
+                            dstPtr->Bgra = (uint)normalOp.Apply(Shadow, OrginalImage);
+                        }
+                        else
+                        {
+                            dstPtr->Bgra = (uint)Shadow;
+                        }
 
                         ++dstPtr;
                     }
