@@ -112,36 +112,39 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="Icons.ShadowEffect.bmp" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAkJJREFUOE+Vkk2I
-        UlEUx0ef32JghQ2ppQQhom20bCcm0YAiFmrgRnFqkwTagIIGbSYcwVpUC5EihQwxpEWRugmXbbUkAh2E
-        ZHRAXEhl4Uf9b/gcZ4qwBz/ue+fd+zvn3nOpldnT7/fFLBbrtkgk2kilUjuZTKZF/1tqrFQqRoqixpj8
-        0+12Z5datDhpNBqx0um0x+l05qPR6GY+n3cOBgPRf4mq1eoZiUSyS6pgMBhTqVTajkQid1ut1smlROvr
-        64/J4kV4PN6Qz+d/q9fr6n9K2u22VCaTfT4oiMfjIVJNrVbT/lUwHA552WzWrVKpPnK53O+kZHRiQIvC
-        4fAW2Va5XD6PGA9wATWXBYPB+2KxuG8ymd4Wi8W1yWTCtNvtL2lBLBYLK5XK7VAoFEfsNDgBDs0kjJVG
-        o3Gq2+0eo42dTmdVq9XWaIHD4XgRCATOqtVqJ2LXwBVAtiMB+7s0nU4Zfr//0eI5yOXytkajuYxYBDwE
-        m+A6sIBz+86l2WweFwqFX5hM5sRms73BmfwgB+hyuZ5j4hPwDDwAd8DGTLLnSCQSt0h2vV7/XqFQXDQY
-        DL+3YjQaP2Ekt/MpuAFc4BJYna8ej8eU1Wp9RRZAdBOj2uPxRNls9hj3YIRtvEbsHtAAMRACxlzQ6/WO
-        CASCr6SVFovlKn6ESTa6Csjf4TsKSAf+fAqFgp1k1+l028i4hfcLQFAqlUwcDmeE+C6qIZ3Yy7qoSSaT
-        a2az+QPKziB+lJ6Yy+Uon8+X9Xq95B4cPpj6F0NAzA5lXksyAAAAAElFTkSuQmCC
-</value>
+      iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+      YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAkhJREFUOE+VkkuI
+      klEUx9Uv3xhYYUNqKUGIaBst25lJNKiIhRq4UbQ2I4EWKOiizYQjWItq4aLIIEMMadFD3aTLtloSgQ4D
+      I+iAuJDKwlf/+zmTMwzR9Icf53Ev555z72XsqN/vi+Px+KrFYnlXqVQubqcPrmq1aqQoagx35vF4svPs
+      f2g0Gh3KZDJel8uVJ53k83nXYDAQbS8fTLVa7axEItmCO2MymVOpVNqOxWL3NjY2Ts13/EOBQOAJzGw3
+      PB5vyOfzfzQaDTXiv6vdbktlMtkm3D0FkslkhHRTr9e1iPdrOBzystmsR6VSfeFyuT9JyyKRaIAlukA0
+      Gl0jY5XL5QuIeYALKDBXOBx+IBaL+yaT6UOxWFyeTCYsh8PxGkt0gUQiEVUqleuRSCSJ+Aw4CQ4DUoTJ
+      aDabp7vd7nEEtDqdzpJWq63DpQs4nc5XoVDonFqtdiG+Aa4BMo4E7H2l6XTKDAaDj+H+uQO5XN7WaDRX
+      4cfAI7AKbgIrOA8WarVaJ4RC4TcWizWx2+3vcSe/yAW63e6XWH4KXoCH4C64A0iRhVKp1G2YmV6v/6RQ
+      KC4bDAZ6FKPR+BWW/M5nYAW4wRWwBOYaj8eUzWZ7A3eGQrdg1V6vN85ms8f4ByOM8Ra5+0ADxEAImGCu
+      Xq93VCAQfCdPabVaryMVBSs7XaD4R9g4IC+wX4VCwQEz0+l06zhxDf4lICiVSiYOhzNCfgvdkJdYnLpb
+      6XR62Ww2f0bbzxEeA/TGXC5H+f3+rM/nI//gCMktxGD8Bgc6y3cczn4bAAAAAElFTkSuQmCC
+    </value>
   </data>
   <data name="ShadowEffect.AlphaAmountLabel" xml:space="preserve">
-    <value>Transparency - Alpha</value>
+    <value>Opacity</value>
   </data>
   <data name="ShadowEffect.BlurAmountLabel" xml:space="preserve">
     <value>Gaussian Blur Radius</value>
   </data>
   <data name="ShadowEffect.Name" xml:space="preserve">
     <value>Shadow</value>
+  </data>
+  <data name="ShadowEffect.OriginalImage" xml:space="preserve">
+    <value>Keep Original Image</value>
   </data>
   <data name="ShadowEffect.ShadowAngle" xml:space="preserve">
     <value>Angle of shadow (left to right)</value>
