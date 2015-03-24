@@ -107,9 +107,14 @@ namespace PaintDotNet.Effects
         /// </summary>
         protected override void OnRender(Rectangle[] rois, int startIndex, int length)
         {
+            int shadowAngle = (int)Token.GetProperty<DoubleProperty>("ShadowEffect.ShadowAngle").Value;
+            int shadowAngleDepth = (int)Token.GetProperty<DoubleProperty>("ShadowEffect.ShadowDepthAngle").Value;
+            double shadowAlpha = (double)(Token.GetProperty<Int32Property>("ShadowEffect.Alpha").Value);
+            bool keepOriginalImage = Token.GetProperty<BooleanProperty>("ShadowEffect.OriginalImage").Value;
+
             for (int i = startIndex; i < startIndex + length; ++i)
             {
-                RenderRectangle(DstArgs.Surface, SrcArgs.Surface, rois[i]);
+                RenderRectangle(DstArgs.Surface, SrcArgs.Surface, rois[i], shadowAlpha, shadowAngle, shadowAngleDepth, keepOriginalImage);
             }
         }
 
@@ -121,10 +126,14 @@ namespace PaintDotNet.Effects
         /// <param name="dst">Describes the destination surface.</param>
         /// <param name="src">Describes the source surface.</param>
         /// <param name="rect">The rectangle that describes the region of interest.</param>
+        /// <param name="shadowAlpha"></param>
+        /// <param name="shadowAngle"></param>
+        /// <param name="shadowDepthAngle"></param>
+        /// <param name="keepOriginalImage"></param>
         /// 
-        private unsafe void RenderRectangle(Surface dst, Surface src, Rectangle rect)
+        private unsafe void RenderRectangle(Surface dst, Surface src, Rectangle rect, double shadowAlpha, int shadowAngle, int shadowDepthAngle, bool keepOriginalImage)
         {
-            double shadowFactor = (double)(Token.GetProperty<Int32Property>("ShadowEffect.Alpha").Value) / 255.0;
+            double shadowFactor = shadowAlpha / 255.0;
 
             // The blurring algorithm was stolen directly from the BlurEffect code.  I couldn't 
             // use it directly because the source image must be transformed prior to applying 
@@ -160,7 +169,7 @@ namespace PaintDotNet.Effects
 
                                 if (srcY >= 0 && srcY < src.Height)
                                 {
-                                    ColorBgra c = getShadowPixel(srcX, srcY, src, shadowFactor, (int)Token.GetProperty<DoubleProperty>("ShadowEffect.ShadowAngle").Value, (int)Token.GetProperty<DoubleProperty>("ShadowEffect.ShadowDepthAngle").Value);
+                                    ColorBgra c = getShadowPixel(srcX, srcY, src, shadowFactor, shadowAngle, shadowDepthAngle);
                                     int wp = w[wy];
 
                                     waSums[wx] += wp;
@@ -217,7 +226,7 @@ namespace PaintDotNet.Effects
 
                                 if (srcY >= 0 && srcY < src.Height)
                                 {
-                                    ColorBgra c = getShadowPixel(srcX, srcY, src, shadowFactor, (int)Token.GetProperty<DoubleProperty>("ShadowEffect.ShadowAngle").Value, (int)Token.GetProperty<DoubleProperty>("ShadowEffect.ShadowDepthAngle").Value);
+                                    ColorBgra c = getShadowPixel(srcX, srcY, src, shadowFactor, shadowAngle, shadowDepthAngle);
                                     int wp = w[wy];
 
                                     waSums[wx] += wp;
@@ -240,7 +249,7 @@ namespace PaintDotNet.Effects
                             Shadow = ColorBgra.FromBgra(0, 0, 0, (byte)(aSum / waSum));
                         }
 
-                        if (Token.GetProperty<BooleanProperty>("ShadowEffect.OriginalImage").Value)
+                        if (keepOriginalImage)
                         {
                             dstPtr->Bgra = (uint)normalOp.Apply(Shadow, OrginalImage);
                         }
