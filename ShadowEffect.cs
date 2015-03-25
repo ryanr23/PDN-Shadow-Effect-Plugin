@@ -58,6 +58,15 @@ namespace PaintDotNet.Effects
 
         #endregion Constructors
 
+        #region Private Fields
+
+        private int _shadowAngle;
+        private int _shadowAngleDepth;
+        private double _shadowAlpha;
+        private bool _keepOriginalImage;
+        
+        #endregion Private Fields
+
         #region Members
 
         /// <summary>
@@ -99,7 +108,18 @@ namespace PaintDotNet.Effects
 
         private GaussianBlurEffect blurEffect;
 
-        // ----------------------------------------------------------------------
+        /// <summary>
+        /// </summary>
+        protected override void OnSetRenderInfo(PropertyBasedEffectConfigToken token, RenderArgs dstArgs, RenderArgs srcArgs)
+        {
+            _shadowAngle = (int)Token.GetProperty<DoubleProperty>("ShadowEffect.ShadowAngle").Value;
+            _shadowAngleDepth = (int)Token.GetProperty<DoubleProperty>("ShadowEffect.ShadowDepthAngle").Value;
+            _shadowAlpha = (double)(Token.GetProperty<Int32Property>("ShadowEffect.Alpha").Value);
+            _keepOriginalImage = Token.GetProperty<BooleanProperty>("ShadowEffect.OriginalImage").Value;
+
+            base.OnSetRenderInfo(token, dstArgs, srcArgs);
+        }
+
         /// <summary>
         /// Render an area defined by a list of rectangles
         /// This function may be called multiple times to render the area of
@@ -107,14 +127,9 @@ namespace PaintDotNet.Effects
         /// </summary>
         protected override void OnRender(Rectangle[] rois, int startIndex, int length)
         {
-            int shadowAngle = (int)Token.GetProperty<DoubleProperty>("ShadowEffect.ShadowAngle").Value;
-            int shadowAngleDepth = (int)Token.GetProperty<DoubleProperty>("ShadowEffect.ShadowDepthAngle").Value;
-            double shadowAlpha = (double)(Token.GetProperty<Int32Property>("ShadowEffect.Alpha").Value);
-            bool keepOriginalImage = Token.GetProperty<BooleanProperty>("ShadowEffect.OriginalImage").Value;
-
             for (int i = startIndex; i < startIndex + length; ++i)
             {
-                RenderRectangle(DstArgs.Surface, SrcArgs.Surface, rois[i], shadowAlpha, shadowAngle, shadowAngleDepth, keepOriginalImage);
+                RenderRectangle(DstArgs.Surface, SrcArgs.Surface, rois[i], _shadowAlpha, _shadowAngle, _shadowAngleDepth, _keepOriginalImage);
             }
         }
 
