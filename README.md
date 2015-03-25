@@ -1,8 +1,11 @@
 # PDN-Shadow-Effect-Plugin
 A plugin for Paint.NET that creates shadow effects.
 
+## Download
+* [Shadow Effect v1.2](http://ryanr23.github.io/PDN-Shadow-Effect-Plugin/downloads/ShadowEffect_1_2.zip)
+
 ## Requirements
-Paint.NET v4.0 or later
+* Paint.NET v4.0 or later
 
 ## Example
 Before Shadow Effect
