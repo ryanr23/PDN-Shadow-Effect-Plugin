@@ -4,10 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+#pragma warning disable 1591
+
 namespace Seren.PaintDotNet.Effects
 {
     public static class ShadowEffectProperties
     {
+        /// <summary>
+        /// Maxium value for shadow opacity.  Equals a black shadow.
+        /// </summary>
         public const int MaxOpacity = 255;
 
         public const string Angle = "ShadowEffect.ShadowAngle";
@@ -17,3 +22,5 @@ namespace Seren.PaintDotNet.Effects
         public const string DiffusionFactor = "ShadowEffect.Diffusion";
     }
 }
+
+#pragma warning enable 1591

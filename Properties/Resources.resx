@@ -159,4 +159,10 @@
   <data name="ShadowEffect.ShadowDepthAngle" xml:space="preserve">
     <value>Angle of shadow depth (front to back)</value>
   </data>
+  <data name="ShadowEffect_KeepOriginalImageLabel" xml:space="preserve">
+    <value>Keep original image</value>
+  </data>
+  <data name="ShadowEffect_SubmenuName" xml:space="preserve">
+    <value>Object</value>
+  </data>
 </root>

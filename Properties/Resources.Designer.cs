@@ -98,6 +98,15 @@ namespace Seren.PaintDotNet.Effects.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Keep original image.
+        /// </summary>
+        internal static string ShadowEffect_KeepOriginalImageLabel {
+            get {
+                return ResourceManager.GetString("ShadowEffect_KeepOriginalImageLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Shadow.
         /// </summary>
         internal static string ShadowEffect_Name {
@@ -140,6 +149,15 @@ namespace Seren.PaintDotNet.Effects.Properties {
         internal static string ShadowEffect_ShadowDepthAngle {
             get {
                 return ResourceManager.GetString("ShadowEffect.ShadowDepthAngle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Object.
+        /// </summary>
+        internal static string ShadowEffect_SubmenuName {
+            get {
+                return ResourceManager.GetString("ShadowEffect_SubmenuName", resourceCulture);
             }
         }
     }

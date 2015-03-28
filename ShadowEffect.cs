@@ -28,6 +28,17 @@ namespace Seren.PaintDotNet.Effects
         }
 
         /// <summary>
+        /// The name of the effects sub-menu in which this effect will reside
+        /// </summary>
+        public static string StaticSubmenuName
+        {
+            get
+            {
+                return Resources.ShadowEffect_SubmenuName;
+            }
+        }
+
+        /// <summary>
         /// The user displayed icon of the effect
         /// </summary>
         public static Image StaticImage
@@ -46,10 +57,10 @@ namespace Seren.PaintDotNet.Effects
         public ShadowEffect()
             : base(StaticName,
                   StaticImage,
-                  "Object",
+                  StaticSubmenuName,
                   EffectFlags.Configurable)
         {
-            this.blurEffect = new GaussianBlurEffect();
+            this._blurEffect = new GaussianBlurEffect();
         }
 
         #endregion Constructors
@@ -57,8 +68,8 @@ namespace Seren.PaintDotNet.Effects
         #region Private Fields
 
         private ShadowEffectConfiguration _effectConfiguration;
-        private GaussianBlurEffect blurEffect;
-        private BinaryPixelOp normalOp = LayerBlendModeUtil.CreateCompositionOp(LayerBlendMode.Normal);
+        private GaussianBlurEffect _blurEffect;
+        private BinaryPixelOp _normalOp = LayerBlendModeUtil.CreateCompositionOp(LayerBlendMode.Normal);
         
         #endregion Private Fields
 
@@ -81,24 +92,25 @@ namespace Seren.PaintDotNet.Effects
         }
 
         /// <summary>
-        /// Configure the user interface of the effect.
-        /// You may change the default control type of your properties or
-        /// modify/suppress the default texts in the controls.
+        /// Configures the user interface of the effect.
         /// </summary>
         protected override ControlInfo OnCreateConfigUI(PropertyCollection props)
         {
             ControlInfo configUI = CreateDefaultConfigUI(props);
 
-            // Change DisplayName (default is the PropertyNames identifier)
             configUI.SetPropertyControlValue(ShadowEffectProperties.Opacity, ControlInfoPropertyNames.DisplayName, Resources.ShadowEffect_AlphaAmountLabel);
             configUI.SetPropertyControlValue(ShadowEffectProperties.Opacity, ControlInfoPropertyNames.ControlColors, new ColorBgra[] { ColorBgra.White, ColorBgra.Black });
+
             configUI.SetPropertyControlValue(ShadowEffectProperties.Angle, ControlInfoPropertyNames.DisplayName, Resources.ShadowEffect_ShadowAngle);
             configUI.SetPropertyControlType(ShadowEffectProperties.Angle, PropertyControlType.AngleChooser);
+
             configUI.SetPropertyControlValue(ShadowEffectProperties.DepthAngle, ControlInfoPropertyNames.DisplayName, Resources.ShadowEffect_ShadowDepthAngle);
             configUI.SetPropertyControlType(ShadowEffectProperties.DepthAngle, PropertyControlType.AngleChooser);
+
             configUI.SetPropertyControlValue(ShadowEffectProperties.DiffusionFactor, ControlInfoPropertyNames.DisplayName, Resources.ShadowEffect_DiffusionLabel);
+
             configUI.SetPropertyControlValue(ShadowEffectProperties.KeepOriginalImage, ControlInfoPropertyNames.DisplayName, string.Empty);
-            configUI.SetPropertyControlValue(ShadowEffectProperties.KeepOriginalImage, ControlInfoPropertyNames.Description, "Keep original image");
+            configUI.SetPropertyControlValue(ShadowEffectProperties.KeepOriginalImage, ControlInfoPropertyNames.Description, Resources.ShadowEffect_KeepOriginalImageLabel);
 
             return configUI;
         }
@@ -107,6 +119,10 @@ namespace Seren.PaintDotNet.Effects
         /// </summary>
         protected override void OnSetRenderInfo(PropertyBasedEffectConfigToken token, RenderArgs dstArgs, RenderArgs srcArgs)
         {
+            //
+            // This is an expensive operation, so pull the effect configuration once here rather than each time its needed during
+            // effect rendering
+            //
             _effectConfiguration = ShadowEffectConfiguration.FromToken(token);
 
             base.OnSetRenderInfo(token, dstArgs, srcArgs);
@@ -115,7 +131,7 @@ namespace Seren.PaintDotNet.Effects
         /// <summary>
         /// Render an area defined by a list of rectangles
         /// This function may be called multiple times to render the area of
-        ///  the selection on the active layer
+        /// the selection on the active layer
         /// </summary>
         protected override void OnRender(Rectangle[] rois, int startIndex, int length)
         {
@@ -124,6 +140,10 @@ namespace Seren.PaintDotNet.Effects
                 RenderRectangle(DstArgs.Surface, SrcArgs.Surface, rois[i], _effectConfiguration);
             }
         }
+
+        #endregion Members
+
+        #region Private Methods
 
         /// <summary>
         /// Creates the shadow of the source image
@@ -267,7 +287,7 @@ namespace Seren.PaintDotNet.Effects
 
                         if (configuration.KeepOriginalImage)
                         {
-                            dstPtr->Bgra = (uint)normalOp.Apply(Shadow, OrginalImage);
+                            dstPtr->Bgra = (uint)_normalOp.Apply(Shadow, OrginalImage);
                         }
                         else
                         {
@@ -279,10 +299,6 @@ namespace Seren.PaintDotNet.Effects
                 }
             }
         }
-
-        #endregion Members
-
-        #region Private Methods
 
         /// <summary>
         /// Calculates the value of this pixel for the shadow of the image defined by inSrcSurface.
