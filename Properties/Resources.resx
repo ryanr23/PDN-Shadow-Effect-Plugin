@@ -120,19 +120,19 @@
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="Icons.ShadowEffect.bmp" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-      iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-      YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAkhJREFUOE+VkkuI
-      klEUx9Uv3xhYYUNqKUGIaBst25lJNKiIhRq4UbQ2I4EWKOiizYQjWItq4aLIIEMMadFD3aTLtloSgQ4D
-      I+iAuJDKwlf/+zmTMwzR9Icf53Ev555z72XsqN/vi+Px+KrFYnlXqVQubqcPrmq1aqQoagx35vF4svPs
-      f2g0Gh3KZDJel8uVJ53k83nXYDAQbS8fTLVa7axEItmCO2MymVOpVNqOxWL3NjY2Ts13/EOBQOAJzGw3
-      PB5vyOfzfzQaDTXiv6vdbktlMtkm3D0FkslkhHRTr9e1iPdrOBzystmsR6VSfeFyuT9JyyKRaIAlukA0
-      Gl0jY5XL5QuIeYALKDBXOBx+IBaL+yaT6UOxWFyeTCYsh8PxGkt0gUQiEVUqleuRSCSJ+Aw4CQ4DUoTJ
-      aDabp7vd7nEEtDqdzpJWq63DpQs4nc5XoVDonFqtdiG+Aa4BMo4E7H2l6XTKDAaDj+H+uQO5XN7WaDRX
-      4cfAI7AKbgIrOA8WarVaJ4RC4TcWizWx2+3vcSe/yAW63e6XWH4KXoCH4C64A0iRhVKp1G2YmV6v/6RQ
-      KC4bDAZ6FKPR+BWW/M5nYAW4wRWwBOYaj8eUzWZ7A3eGQrdg1V6vN85ms8f4ByOM8Ra5+0ADxEAImGCu
-      Xq93VCAQfCdPabVaryMVBSs7XaD4R9g4IC+wX4VCwQEz0+l06zhxDf4lICiVSiYOhzNCfgvdkJdYnLpb
-      6XR62Ww2f0bbzxEeA/TGXC5H+f3+rM/nI//gCMktxGD8Bgc6y3cczn4bAAAAAElFTkSuQmCC
-    </value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAkhJREFUOE+VkkuI
+        klEUx9Uv3xhYYUNqKUGIaBst25lJNKiIhRq4UbQ2I4EWKOiizYQjWItq4aLIIEMMadFD3aTLtloSgQ4D
+        I+iAuJDKwlf/+zmTMwzR9Icf53Ev555z72XsqN/vi+Px+KrFYnlXqVQubqcPrmq1aqQoagx35vF4svPs
+        f2g0Gh3KZDJel8uVJ53k83nXYDAQbS8fTLVa7axEItmCO2MymVOpVNqOxWL3NjY2Ts13/EOBQOAJzGw3
+        PB5vyOfzfzQaDTXiv6vdbktlMtkm3D0FkslkhHRTr9e1iPdrOBzystmsR6VSfeFyuT9JyyKRaIAlukA0
+        Gl0jY5XL5QuIeYALKDBXOBx+IBaL+yaT6UOxWFyeTCYsh8PxGkt0gUQiEVUqleuRSCSJ+Aw4CQ4DUoTJ
+        aDabp7vd7nEEtDqdzpJWq63DpQs4nc5XoVDonFqtdiG+Aa4BMo4E7H2l6XTKDAaDj+H+uQO5XN7WaDRX
+        4cfAI7AKbgIrOA8WarVaJ4RC4TcWizWx2+3vcSe/yAW63e6XWH4KXoCH4C64A0iRhVKp1G2YmV6v/6RQ
+        KC4bDAZ6FKPR+BWW/M5nYAW4wRWwBOYaj8eUzWZ7A3eGQrdg1V6vN85ms8f4ByOM8Ra5+0ADxEAImGCu
+        Xq93VCAQfCdPabVaryMVBSs7XaD4R9g4IC+wX4VCwQEz0+l06zhxDf4lICiVSiYOhzNCfgvdkJdYnLpb
+        6XR62Ww2f0bbzxEeA/TGXC5H+f3+rM/nI//gCMktxGD8Bgc6y3cczn4bAAAAAElFTkSuQmCC
+</value>
   </data>
   <data name="ShadowEffect.AlphaAmountLabel" xml:space="preserve">
     <value>Opacity</value>
@@ -140,11 +140,18 @@
   <data name="ShadowEffect.BlurAmountLabel" xml:space="preserve">
     <value>Gaussian Blur Radius</value>
   </data>
+  <data name="ShadowEffect.DiffusionLabel" xml:space="preserve">
+    <value>Diffusion Factor</value>
+  </data>
   <data name="ShadowEffect.Name" xml:space="preserve">
     <value>Shadow</value>
   </data>
   <data name="ShadowEffect.OriginalImage" xml:space="preserve">
     <value>Keep Original Image</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="ShadowEffect.sample" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ShadowEffect.sample.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="ShadowEffect.ShadowAngle" xml:space="preserve">
     <value>Angle of shadow (left to right)</value>

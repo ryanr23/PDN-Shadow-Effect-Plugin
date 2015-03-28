@@ -5,8 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Resources;
+using PaintDotNet.Effects;
+using PaintDotNet;
+using Seren.PaintDotNet.Effects.Properties;
 
-namespace PaintDotNet.Effects
+namespace Seren.PaintDotNet.Effects
 {
     /// <summary>
     /// Configurable effect for Paint.NET which creates a shadow of the source image
@@ -20,7 +23,7 @@ namespace PaintDotNet.Effects
         {
             get
             {
-                return resources.GetString("ShadowEffect.Name");
+                return Resources.ShadowEffect_Name;
             }
         }
 
@@ -31,16 +34,9 @@ namespace PaintDotNet.Effects
         {
             get
             {
-                return (Image)resources.GetObject("Icons.ShadowEffect.bmp");
+                return (Image)Resources.Icons_ShadowEffect_bmp;
             }
         }
-
-        #region Static Private Fields
-
-        private static ResourceManager resources = new ResourceManager(typeof(ShadowEffect));
-        private static int rowsPerBlurRadius = 5;
-
-        #endregion Static Private Fields
 
         #region Constructors
 
@@ -60,10 +56,9 @@ namespace PaintDotNet.Effects
 
         #region Private Fields
 
-        private int _shadowAngle;
-        private int _shadowAngleDepth;
-        private double _shadowAlpha;
-        private bool _keepOriginalImage;
+        private ShadowEffectConfiguration _effectConfiguration;
+        private GaussianBlurEffect blurEffect;
+        private BinaryPixelOp normalOp = LayerBlendModeUtil.CreateCompositionOp(LayerBlendMode.Normal);
         
         #endregion Private Fields
 
@@ -75,10 +70,11 @@ namespace PaintDotNet.Effects
         {
             List<Property> propsBuilder = new List<Property>()
             {
-                new Int32Property("ShadowEffect.Alpha", 115, 0, 255),
-                new DoubleProperty("ShadowEffect.ShadowAngle", 45, 0, 180),
-                new DoubleProperty("ShadowEffect.ShadowDepthAngle", 45, 0, 90),
-                new BooleanProperty("ShadowEffect.OriginalImage", true)
+                new Int32Property(ShadowEffectProperties.Opacity, 115, 0, ShadowEffectProperties.MaxOpacity),
+                new DoubleProperty(ShadowEffectProperties.Angle, 45, 0, 180),
+                new DoubleProperty(ShadowEffectProperties.DepthAngle, 45, 0, 90),
+                new Int32Property(ShadowEffectProperties.DiffusionFactor, 50, 0, 100),
+                new BooleanProperty(ShadowEffectProperties.KeepOriginalImage, true)
             };
 
             return new PropertyCollection(propsBuilder);
@@ -94,28 +90,24 @@ namespace PaintDotNet.Effects
             ControlInfo configUI = CreateDefaultConfigUI(props);
 
             // Change DisplayName (default is the PropertyNames identifier)
-            configUI.SetPropertyControlValue("ShadowEffect.Alpha", ControlInfoPropertyNames.DisplayName, resources.GetString("ShadowEffect.AlphaAmountLabel"));
-            configUI.SetPropertyControlValue("ShadowEffect.Alpha", ControlInfoPropertyNames.ControlColors, new ColorBgra[] { ColorBgra.White, ColorBgra.Black });
-            configUI.SetPropertyControlValue("ShadowEffect.ShadowAngle", ControlInfoPropertyNames.DisplayName, resources.GetString("ShadowEffect.ShadowAngle"));
-            configUI.SetPropertyControlType("ShadowEffect.ShadowAngle", PropertyControlType.AngleChooser);
-            configUI.SetPropertyControlValue("ShadowEffect.ShadowDepthAngle", ControlInfoPropertyNames.DisplayName, resources.GetString("ShadowEffect.ShadowDepthAngle"));
-            configUI.SetPropertyControlType("ShadowEffect.ShadowDepthAngle", PropertyControlType.AngleChooser);
-            configUI.SetPropertyControlValue("ShadowEffect.OriginalImage", ControlInfoPropertyNames.DisplayName, string.Empty);
-            configUI.SetPropertyControlValue("ShadowEffect.OriginalImage", ControlInfoPropertyNames.Description, "Keep original image");
+            configUI.SetPropertyControlValue(ShadowEffectProperties.Opacity, ControlInfoPropertyNames.DisplayName, Resources.ShadowEffect_AlphaAmountLabel);
+            configUI.SetPropertyControlValue(ShadowEffectProperties.Opacity, ControlInfoPropertyNames.ControlColors, new ColorBgra[] { ColorBgra.White, ColorBgra.Black });
+            configUI.SetPropertyControlValue(ShadowEffectProperties.Angle, ControlInfoPropertyNames.DisplayName, Resources.ShadowEffect_ShadowAngle);
+            configUI.SetPropertyControlType(ShadowEffectProperties.Angle, PropertyControlType.AngleChooser);
+            configUI.SetPropertyControlValue(ShadowEffectProperties.DepthAngle, ControlInfoPropertyNames.DisplayName, Resources.ShadowEffect_ShadowDepthAngle);
+            configUI.SetPropertyControlType(ShadowEffectProperties.DepthAngle, PropertyControlType.AngleChooser);
+            configUI.SetPropertyControlValue(ShadowEffectProperties.DiffusionFactor, ControlInfoPropertyNames.DisplayName, Resources.ShadowEffect_DiffusionLabel);
+            configUI.SetPropertyControlValue(ShadowEffectProperties.KeepOriginalImage, ControlInfoPropertyNames.DisplayName, string.Empty);
+            configUI.SetPropertyControlValue(ShadowEffectProperties.KeepOriginalImage, ControlInfoPropertyNames.Description, "Keep original image");
 
             return configUI;
         }
-
-        private GaussianBlurEffect blurEffect;
 
         /// <summary>
         /// </summary>
         protected override void OnSetRenderInfo(PropertyBasedEffectConfigToken token, RenderArgs dstArgs, RenderArgs srcArgs)
         {
-            _shadowAngle = (int)Token.GetProperty<DoubleProperty>("ShadowEffect.ShadowAngle").Value;
-            _shadowAngleDepth = (int)Token.GetProperty<DoubleProperty>("ShadowEffect.ShadowDepthAngle").Value;
-            _shadowAlpha = (double)(Token.GetProperty<Int32Property>("ShadowEffect.Alpha").Value);
-            _keepOriginalImage = Token.GetProperty<BooleanProperty>("ShadowEffect.OriginalImage").Value;
+            _effectConfiguration = ShadowEffectConfiguration.FromToken(token);
 
             base.OnSetRenderInfo(token, dstArgs, srcArgs);
         }
@@ -129,11 +121,9 @@ namespace PaintDotNet.Effects
         {
             for (int i = startIndex; i < startIndex + length; ++i)
             {
-                RenderRectangle(DstArgs.Surface, SrcArgs.Surface, rois[i], _shadowAlpha, _shadowAngle, _shadowAngleDepth, _keepOriginalImage);
+                RenderRectangle(DstArgs.Surface, SrcArgs.Surface, rois[i], _effectConfiguration);
             }
         }
-
-        private BinaryPixelOp normalOp = LayerBlendModeUtil.CreateCompositionOp(LayerBlendMode.Normal);
 
         /// <summary>
         /// Creates the shadow of the source image
@@ -141,26 +131,37 @@ namespace PaintDotNet.Effects
         /// <param name="dst">Describes the destination surface.</param>
         /// <param name="src">Describes the source surface.</param>
         /// <param name="rect">The rectangle that describes the region of interest.</param>
-        /// <param name="shadowAlpha"></param>
-        /// <param name="shadowAngle"></param>
-        /// <param name="shadowDepthAngle"></param>
-        /// <param name="keepOriginalImage"></param>
+        /// <param name="configuration"></param>
         /// 
-        private unsafe void RenderRectangle(Surface dst, Surface src, Rectangle rect, double shadowAlpha, int shadowAngle, int shadowDepthAngle, bool keepOriginalImage)
+        private unsafe void RenderRectangle(Surface dst, Surface src, Rectangle rect, ShadowEffectConfiguration configuration)
         {
-            double shadowFactor = shadowAlpha / 255.0;
+            double shadowFactor = configuration.Opacity / ShadowEffectProperties.MaxOpacity;
 
+            //
             // The blurring algorithm was stolen directly from the BlurEffect code.  I couldn't 
             // use it directly because the source image must be transformed prior to applying 
             // the blur effect. Also, I gradually increase the blur radius from one end
             // of the shadow to the other, which the blur effect code doesn't support either.
+            //
             if (rect.Height >= 1 && rect.Width >= 1)
             {
                 // For each row in the rectangle
                 for (int y = rect.Top; y < rect.Bottom; ++y)
                 {
-                    double radius = invertedYcoordinate(y, src.Height) / (double)rowsPerBlurRadius;
-                    int[] w = CreateGaussianBlurRow(radius);
+                    
+                    //
+                    // Shadow Diffusion - The blur radius increases the further the row is from the bottom
+                    // Diffusion Factor - [0-100] How much the shadow is diffused.  0 = None, 100 = Max
+                    //
+                    double blurRadius = 0;
+                    if( configuration.DiffusionFactor > 0 )
+                    {
+                        // diffusion factor of 50 = 5 rows/blur_radius
+                        double rowsPerBlurRadius = 250.0 / (double)configuration.DiffusionFactor;
+                        blurRadius = invertedYcoordinate(y, src.Height) / rowsPerBlurRadius; 
+                    }
+
+                    int[] w = CreateGaussianBlurRow(blurRadius);
                     int wlen = w.Length;
                     int r = (wlen - 1) / 2;
                     long[] waSums = new long[wlen];
@@ -184,7 +185,7 @@ namespace PaintDotNet.Effects
 
                                 if (srcY >= 0 && srcY < src.Height)
                                 {
-                                    ColorBgra c = getShadowPixel(srcX, srcY, src, shadowFactor, shadowAngle, shadowDepthAngle);
+                                    ColorBgra c = getShadowPixel(srcX, srcY, src, shadowFactor, configuration.Angle, configuration.DepthAngle);
                                     int wp = w[wy];
 
                                     waSums[wx] += wp;
@@ -241,7 +242,7 @@ namespace PaintDotNet.Effects
 
                                 if (srcY >= 0 && srcY < src.Height)
                                 {
-                                    ColorBgra c = getShadowPixel(srcX, srcY, src, shadowFactor, shadowAngle, shadowDepthAngle);
+                                    ColorBgra c = getShadowPixel(srcX, srcY, src, shadowFactor, configuration.Angle, configuration.DepthAngle);
                                     int wp = w[wy];
 
                                     waSums[wx] += wp;
@@ -264,7 +265,7 @@ namespace PaintDotNet.Effects
                             Shadow = ColorBgra.FromBgra(0, 0, 0, (byte)(aSum / waSum));
                         }
 
-                        if (keepOriginalImage)
+                        if (configuration.KeepOriginalImage)
                         {
                             dstPtr->Bgra = (uint)normalOp.Apply(Shadow, OrginalImage);
                         }
