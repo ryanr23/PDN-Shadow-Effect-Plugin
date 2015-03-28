@@ -65,7 +65,7 @@ namespace Seren.PaintDotNet.Effects.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap Icons_ShadowEffect_bmp {
             get {
-                object obj = ResourceManager.GetObject("Icons.ShadowEffect.bmp", resourceCulture);
+                object obj = ResourceManager.GetObject("Icons_ShadowEffect_bmp", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -75,7 +75,7 @@ namespace Seren.PaintDotNet.Effects.Properties {
         /// </summary>
         internal static string ShadowEffect_AlphaAmountLabel {
             get {
-                return ResourceManager.GetString("ShadowEffect.AlphaAmountLabel", resourceCulture);
+                return ResourceManager.GetString("ShadowEffect_AlphaAmountLabel", resourceCulture);
             }
         }
         
@@ -84,7 +84,7 @@ namespace Seren.PaintDotNet.Effects.Properties {
         /// </summary>
         internal static string ShadowEffect_BlurAmountLabel {
             get {
-                return ResourceManager.GetString("ShadowEffect.BlurAmountLabel", resourceCulture);
+                return ResourceManager.GetString("ShadowEffect_BlurAmountLabel", resourceCulture);
             }
         }
         
@@ -93,7 +93,7 @@ namespace Seren.PaintDotNet.Effects.Properties {
         /// </summary>
         internal static string ShadowEffect_DiffusionLabel {
             get {
-                return ResourceManager.GetString("ShadowEffect.DiffusionLabel", resourceCulture);
+                return ResourceManager.GetString("ShadowEffect_DiffusionLabel", resourceCulture);
             }
         }
         
@@ -111,7 +111,7 @@ namespace Seren.PaintDotNet.Effects.Properties {
         /// </summary>
         internal static string ShadowEffect_Name {
             get {
-                return ResourceManager.GetString("ShadowEffect.Name", resourceCulture);
+                return ResourceManager.GetString("ShadowEffect_Name", resourceCulture);
             }
         }
         
@@ -120,7 +120,7 @@ namespace Seren.PaintDotNet.Effects.Properties {
         /// </summary>
         internal static string ShadowEffect_OriginalImage {
             get {
-                return ResourceManager.GetString("ShadowEffect.OriginalImage", resourceCulture);
+                return ResourceManager.GetString("ShadowEffect_OriginalImage", resourceCulture);
             }
         }
         
@@ -129,7 +129,7 @@ namespace Seren.PaintDotNet.Effects.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap ShadowEffect_sample {
             get {
-                object obj = ResourceManager.GetObject("ShadowEffect.sample", resourceCulture);
+                object obj = ResourceManager.GetObject("ShadowEffect_sample", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -139,7 +139,7 @@ namespace Seren.PaintDotNet.Effects.Properties {
         /// </summary>
         internal static string ShadowEffect_ShadowAngle {
             get {
-                return ResourceManager.GetString("ShadowEffect.ShadowAngle", resourceCulture);
+                return ResourceManager.GetString("ShadowEffect_ShadowAngle", resourceCulture);
             }
         }
         
@@ -148,7 +148,7 @@ namespace Seren.PaintDotNet.Effects.Properties {
         /// </summary>
         internal static string ShadowEffect_ShadowDepthAngle {
             get {
-                return ResourceManager.GetString("ShadowEffect.ShadowDepthAngle", resourceCulture);
+                return ResourceManager.GetString("ShadowEffect_ShadowDepthAngle", resourceCulture);
             }
         }
         

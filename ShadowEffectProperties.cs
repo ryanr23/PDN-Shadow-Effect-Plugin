@@ -23,4 +23,4 @@ namespace Seren.PaintDotNet.Effects
     }
 }
 
-#pragma warning enable 1591
+#pragma warning restore 1591

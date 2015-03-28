@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="Icons.ShadowEffect.bmp" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+  <data name="Icons_ShadowEffect_bmp" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
         YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAkhJREFUOE+VkkuI
@@ -134,29 +134,29 @@
         6XR62Ww2f0bbzxEeA/TGXC5H+f3+rM/nI//gCMktxGD8Bgc6y3cczn4bAAAAAElFTkSuQmCC
 </value>
   </data>
-  <data name="ShadowEffect.AlphaAmountLabel" xml:space="preserve">
+  <data name="ShadowEffect_AlphaAmountLabel" xml:space="preserve">
     <value>Opacity</value>
   </data>
-  <data name="ShadowEffect.BlurAmountLabel" xml:space="preserve">
+  <data name="ShadowEffect_BlurAmountLabel" xml:space="preserve">
     <value>Gaussian Blur Radius</value>
   </data>
-  <data name="ShadowEffect.DiffusionLabel" xml:space="preserve">
+  <data name="ShadowEffect_DiffusionLabel" xml:space="preserve">
     <value>Diffusion Factor</value>
   </data>
-  <data name="ShadowEffect.Name" xml:space="preserve">
+  <data name="ShadowEffect_Name" xml:space="preserve">
     <value>Shadow</value>
   </data>
-  <data name="ShadowEffect.OriginalImage" xml:space="preserve">
+  <data name="ShadowEffect_OriginalImage" xml:space="preserve">
     <value>Keep Original Image</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="ShadowEffect.sample" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="ShadowEffect_sample" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ShadowEffect.sample.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="ShadowEffect.ShadowAngle" xml:space="preserve">
+  <data name="ShadowEffect_ShadowAngle" xml:space="preserve">
     <value>Angle of shadow (left to right)</value>
   </data>
-  <data name="ShadowEffect.ShadowDepthAngle" xml:space="preserve">
+  <data name="ShadowEffect_ShadowDepthAngle" xml:space="preserve">
     <value>Angle of shadow depth (front to back)</value>
   </data>
   <data name="ShadowEffect_KeepOriginalImageLabel" xml:space="preserve">

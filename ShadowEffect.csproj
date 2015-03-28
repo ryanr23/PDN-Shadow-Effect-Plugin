@@ -124,11 +124,13 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\ShadowEffect.sample.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="InstallEffect.bat" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
     </PreBuildEvent>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>call $(ProjectDir)InstallEffect.bat $(TargetPath)</PostBuildEvent>
   </PropertyGroup>
 </Project>
