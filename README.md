@@ -17,7 +17,7 @@ Before Shadow Effect
 
 With Shadow Effect
 
-![With Shadow Effect](http://ryanr23.github.io/PDN-Shadow-Effect-Plugin/images/v4_0_with_shadow.png)
+![With Shadow Effect](http://ryanr23.github.io/PDN-Shadow-Effect-Plugin/images/v4_0_with_shadow_1_3.png)
 
 ## Installation
 
