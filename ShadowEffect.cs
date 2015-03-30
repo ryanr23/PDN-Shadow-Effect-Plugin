@@ -82,9 +82,9 @@ namespace Seren.PaintDotNet.Effects
             List<Property> propsBuilder = new List<Property>()
             {
                 new Int32Property(ShadowEffectProperties.Opacity, 115, 0, ShadowEffectProperties.MaxOpacity),
+                new Int32Property(ShadowEffectProperties.DiffusionFactor, 50, 0, 100),
                 new DoubleProperty(ShadowEffectProperties.Angle, 45, 0, 180),
                 new DoubleProperty(ShadowEffectProperties.DepthAngle, 45, 0, 90),
-                new Int32Property(ShadowEffectProperties.DiffusionFactor, 50, 0, 100),
                 new BooleanProperty(ShadowEffectProperties.KeepOriginalImage, true)
             };
 
